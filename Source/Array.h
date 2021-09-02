@@ -1,8 +1,7 @@
 #pragma once
-
 #include <initializer_list>
 
-namespace Data_Structures
+namespace DataStructures
 {
 	template<typename T, unsigned long long S>
 	class Array
@@ -81,32 +80,22 @@ namespace Data_Structures
 			}
 		}
 
-		void Add(const T& data, const bool& sort = false)
+		void Add(const T& data)
 		{
 			if(count < S)
 			{
 				count++;
 				array[count - 1] = data;
 			}
-
-			if(sort == true)
-			{
-				Sort();
-			}
 		}
 
-		void Remove(const unsigned long long& index, const bool& sort = false)
+		void Remove(const unsigned long long& index)
 		{
 			if(index >= 0 && index < count)
 			{
 				count--;
 				array[index] = {};
 				std::swap(array[index], array[count]);
-			}
-
-			if(sort == true)
-			{
-				Sort();
 			}
 		}
 
@@ -120,40 +109,31 @@ namespace Data_Structures
 
 		void Sort()
 		{
-			bool sorted = false;
-			unsigned long long j = 0;
-			unsigned long long l = 0;
-			unsigned long long r = count - 1;
+			if(count < 2) return;
 
-			while(sorted == false)
+			unsigned int l = 0;
+			unsigned int r = 0;
+			unsigned int left = 0;
+			unsigned int right = count - 1;
+
+			while(left < right)
 			{
-				sorted = true;
+				if(array[left] > array[right]) std::swap(array[left], array[right]);
 
-				for(unsigned int i = l; i < r; i++)
+				l = left;
+				r = right;
+
+				while(l < right)
 				{
-					j = (count - i) - 1;
+					if(array[l] > array[l + 1]) std::swap(array[l], array[l + 1]);
+					if(array[r] < array[r - 1]) std::swap(array[r], array[r - 1]);
 
-					if(i < j && array[i] > array[j])
-					{
-						sorted = false;
-						std::swap(array[i], array[j]);
-					}
-
-					if(array[i] > array[i + 1])
-					{
-						sorted = false;
-						std::swap(array[i], array[i + 1]);
-					}
-
-					if(array[j] < array[j - 1])
-					{
-						sorted = false;
-						std::swap(array[j], array[j - 1]);
-					}
+					l++;
+					r--;
 				}
 
-				l++;
-				r--;
+				left++;
+				right--;
 			}
 		}
 	};

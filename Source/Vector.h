@@ -1,8 +1,7 @@
 #pragma once
-
 #include <initializer_list>
 
-namespace Data_Structures
+namespace DataStructures
 {
 	template<typename T>
 	class Vector
@@ -13,14 +12,11 @@ namespace Data_Structures
 		unsigned long long count = 0;
 
 	public:
-		Vector(const unsigned long long& initial_size = 0, const T& data = {})
+		Vector(const unsigned long long& startSize = 0, const T& data = {})
 		{
-			if(initial_size > 0)
-			{
-				size = initial_size;
-				vector = new T[initial_size];
-				Fill(data);
-			}
+			size = startSize;
+			vector = new T[startSize];
+			Fill(data);
 		}
 
 		Vector(const std::initializer_list<T>& list) : vector{new T[list.size()]}, size{list.size()}, count{0}
@@ -31,11 +27,11 @@ namespace Data_Structures
 			}
 		}
 
-		Vector(const Vector& copy_vector) : vector{new T[copy_vector.size]}, size{copy_vector.size}, count{copy_vector.count}
+		Vector(const Vector& copy) : vector{new T[copy.size]}, size{copy.size}, count{copy.count}
 		{
 			for(unsigned long long index = 0; index < size; index++)
 			{
-				vector[index] = copy_vector[index];
+				vector[index] = copy[index];
 			}
 		}
 
@@ -107,55 +103,45 @@ namespace Data_Structures
 		{
 			size = count;
 
-			T* new_vector = new T[size];
+			T* newVector = new T[size];
 
 			for(unsigned long long index = 0; index < count; index++)
 			{
-				new_vector[index] = vector[index];
+				newVector[index] = vector[index];
 			}
 
 			delete[] vector;
-			vector = new_vector;
+			vector = newVector;
 		}
 
-		void Add(const T& data, const unsigned long long& expansion = 1, const bool& sort = false)
+		void Add(const T& data, const unsigned long long& expansion = 1)
 		{
 			count++;
 
 			if(count > size)
 			{
 				size += expansion;
-				T* new_vector = new T[size];
+				T* newVector = new T[size];
 
 				for(unsigned long long index = 0; index < count; index++)
 				{
-					new_vector[index] = vector[index];
+					newVector[index] = vector[index];
 				}
 
 				delete[] vector;
-				vector = new_vector;
+				vector = newVector;
 			}
 
 			vector[count - 1] = data;
-
-			if(sort == true)
-			{
-				Sort();
-			}
 		}
 
-		void Remove(const unsigned long long& index, const bool& sort = false)
+		void Remove(const unsigned long long& index)
 		{
 			if(index >= 0 && index < count)
 			{
 				count--;
 				vector[index] = {};
 				std::swap(vector[index], vector[count]);
-			}
-
-			if(sort == true)
-			{
-				Sort();
 			}
 		}
 
@@ -169,40 +155,31 @@ namespace Data_Structures
 
 		void Sort()
 		{
-			bool sorted = false;
-			unsigned long long j = 0;
-			unsigned long long l = 0;
-			unsigned long long r = count - 1;
+			if(count < 2) return;
 
-			while(sorted == false)
+			unsigned int l = 0;
+			unsigned int r = 0;
+			unsigned int left = 0;
+			unsigned int right = count - 1;
+
+			while(left < right)
 			{
-				sorted = true;
+				if(vector[left] > vector[right]) std::swap(vector[left], vector[right]);
 
-				for(unsigned int i = l; i < r; i++)
+				l = left;
+				r = right;
+
+				while(l < right)
 				{
-					j = (count - i) - 1;
+					if(vector[l] > vector[l + 1]) std::swap(vector[l], vector[l + 1]);
+					if(vector[r] < vector[r - 1]) std::swap(vector[r], vector[r - 1]);
 
-					if(i < j && vector[i] > vector[j])
-					{
-						sorted = false;
-						std::swap(vector[i], vector[j]);
-					}
-
-					if(vector[i] > vector[i + 1])
-					{
-						sorted = false;
-						std::swap(vector[i], vector[i + 1]);
-					}
-
-					if(vector[j] < vector[j - 1])
-					{
-						sorted = false;
-						std::swap(vector[j], vector[j - 1]);
-					}
+					l++;
+					r--;
 				}
 
-				l++;
-				r--;
+				left++;
+				right--;
 			}
 		}
 	};

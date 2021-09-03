@@ -1,12 +1,11 @@
 #pragma once
-
 #include <queue>
 #include <vector>
 
-namespace Data_Structures
+namespace DataStructures
 {
 	template<typename T>
-	class AVL_Tree
+	class AVLTree
 	{
 	private:
 		struct Node
@@ -24,13 +23,13 @@ namespace Data_Structures
 		Node* root = nullptr;
 
 	public:
-		AVL_Tree()
+		AVLTree()
 		{}
 
-		AVL_Tree(const T& data) : root{new Node(data)}
+		AVLTree(const T& data) : root{new Node(data)}
 		{}
 
-		~AVL_Tree()
+		~AVLTree()
 		{}
 
 		T Min()
@@ -43,40 +42,42 @@ namespace Data_Structures
 			return Max(root);
 		}
 
-		bool Search(const T& data)
+		bool Contains(const T& data)
 		{
 			Node* node = Search(root, data);
-
+			
 			return (node == nullptr) ? false : true;
 		}
 
-		std::vector<T> Depth_First_Search_In_Order()
+		std::vector<T> DepthFirstSearchInOrder()
 		{
 			std::vector<T> vector;
-			Traverse_In_Order(root, vector);
+			TraverseInOrder(root, vector);
+			
 			return vector;
 		}
 
-		std::vector<T> Depth_First_Search_Pre_Order()
+		std::vector<T> DepthFirstSearchPreOrder()
 		{
 			std::vector<T> vector;
-			Traverse_Pre_Order(root, vector);
+			TraversePreOrder(root, vector);
+			
 			return vector;
 		}
 
-		std::vector<T> Depth_First_Search_Post_Order()
+		std::vector<T> DepthFirstSearchPostOrder()
 		{
 			std::vector<T> vector;
-			Traverse_Post_Order(root, vector);
+			TraversePostOrder(root, vector);
+			
 			return vector;
 		}
 
-		std::vector<T> Breadth_First_Search()
+		std::vector<T> BreadthFirstSearch()
 		{
 			Node* node = root;
 			std::vector<T> vector;
 			std::queue<Node*> queue;
-
 			queue.push(node);
 
 			while(queue.size() > 0)
@@ -85,15 +86,8 @@ namespace Data_Structures
 				queue.pop();
 				vector.push_back(node->data);
 
-				if(node->left != nullptr)
-				{
-					queue.push(node->left);
-				}
-
-				if(node->right != nullptr)
-				{
-					queue.push(node->right);
-				}
+				if(node->left != nullptr) queue.push(node->left);
+				if(node->right != nullptr) queue.push(node->right);
 			}
 
 			return vector;
@@ -101,7 +95,7 @@ namespace Data_Structures
 
 		void Insert(const T& data)
 		{
-			root = Insert(root, data);
+			if(Contains(data) == false) root = Insert(root, data);
 		}
 
 		void Remove(const T& data)
@@ -112,57 +106,53 @@ namespace Data_Structures
 		T Successor(const T& data)
 		{
 			Node* node = Search(root, data);
-			return node == nullptr ? 0 : Successor(node);
+			
+			return (node == nullptr) ? 0 : Successor(node);
 		}
 
 		T Predecessor(const T& data)
 		{
 			Node* node = Search(root, data);
-			return node == nullptr ? 0 : Predecessor(node);
+			
+			return (node == nullptr) ? 0 : Predecessor(node);
 		}
 
 	private:
 		int Height(Node* node)
 		{
-			return node == nullptr ? -1 : node->height;
+			return (node == nullptr) ? -1 : node->height;
 		}
 
-		Node* Rotate_Left(Node* node)
+		Node* RotateLeft(Node* node)
 		{
-			Node* balance_node = node->right;
-			balance_node->parent = node->parent;
-			node->parent = balance_node;
-			node->right = balance_node->left;
+			Node* pivot = node->right;
+			pivot->parent = node->parent;
+			node->parent = pivot;
+			node->right = pivot->left;
 
-			if(balance_node->left != nullptr)
-			{
-				balance_node->left->parent = node;
-			}
+			if(pivot->left != nullptr) pivot->left->parent = node;
 
-			balance_node->left = node;
+			pivot->left = node;
 			node->height = std::max(Height(node->left), Height(node->right)) + 1;
-			balance_node->height = std::max(Height(balance_node->left), Height(balance_node->right)) + 1;
+			pivot->height = std::max(Height(pivot->left), Height(pivot->right)) + 1;
 
-			return balance_node;
+			return pivot;
 		}
 
-		Node* Rotate_Right(Node* node)
+		Node* RotateRight(Node* node)
 		{
-			Node* balance_node = node->left;
-			balance_node->parent = node->parent;
-			node->parent = balance_node;
-			node->left = balance_node->right;
+			Node* pivot = node->left;
+			pivot->parent = node->parent;
+			node->parent = pivot;
+			node->left = pivot->right;
 
-			if(balance_node->right != nullptr)
-			{
-				balance_node->right->parent = node;
-			}
+			if(pivot->right != nullptr) pivot->right->parent = node;
 
-			balance_node->right = node;
+			pivot->right = node;
 			node->height = std::max(Height(node->left), Height(node->right)) + 1;
-			balance_node->height = std::max(Height(balance_node->left), Height(balance_node->right)) + 1;
+			pivot->height = std::max(Height(pivot->left), Height(pivot->right)) + 1;
 
-			return balance_node;
+			return pivot;
 		}
 
 		Node* Insert(Node* node, const T& data)
@@ -182,34 +172,34 @@ namespace Data_Structures
 				node->left->parent = node;
 			}
 
-			int balance = Height(node->left) - Height(node->right);
+			int pivot = Height(node->left) - Height(node->right);
 
-			if(balance == 2)
+			if(pivot == 2)
 			{
-				int balance2 = Height(node->left->left) - Height(node->left->right);
+				int pivot2 = Height(node->left->left) - Height(node->left->right);
 
-				if(balance2 == 1)
+				if(pivot2 == 1)
 				{
-					node = Rotate_Right(node);
+					node = RotateRight(node);
 				}
 				else
 				{
-					node->left = Rotate_Left(node->left);
-					node = Rotate_Right(node);
+					node->left = RotateLeft(node->left);
+					node = RotateRight(node);
 				}
 			}
-			else if(balance == -2)
+			else if(pivot == -2)
 			{
-				int balance2 = Height(node->right->left) - Height(node->right->right);
+				int pivot2 = Height(node->right->left) - Height(node->right->right);
 
-				if(balance2 == -1)
+				if(pivot2 == -1)
 				{
-					node = Rotate_Left(node);
+					node = RotateLeft(node);
 				}
 				else
 				{
-					node->right = Rotate_Right(node->right);
-					node = Rotate_Left(node);
+					node->right = RotateRight(node->right);
+					node = RotateLeft(node);
 				}
 
 				node->height = std::max(Height(node->left), Height(node->right)) + 1;
@@ -220,10 +210,7 @@ namespace Data_Structures
 
 		Node* Remove(Node* node, const T& data)
 		{
-			if(node == nullptr)
-			{
-				return nullptr;
-			}
+			if(node == nullptr) return nullptr;
 
 			if(node->data == data)
 			{
@@ -259,34 +246,34 @@ namespace Data_Structures
 
 			if(node != nullptr)
 			{
-				int balance = Height(node->left) - Height(node->right);
+				int pivot = Height(node->left) - Height(node->right);
 
-				if(balance == 2)
+				if(pivot == 2)
 				{
-					int balance2 = Height(node->left->left) - Height(node->left->right);
+					int pivot2 = Height(node->left->left) - Height(node->left->right);
 
-					if(balance2 == 1)
+					if(pivot2 == 1)
 					{
-						node = Rotate_Right(node);
+						node = RotateRight(node);
 					}
 					else
 					{
-						node->left = Rotate_Left(node->left);
-						node = Rotate_Right(node);
+						node->left = RotateLeft(node->left);
+						node = RotateRight(node);
 					}
 				}
-				else if(balance == -2)
+				else if(pivot == -2)
 				{
-					int balance2 = Height(node->right->left) - Height(node->right->right);
+					int pivot2 = Height(node->right->left) - Height(node->right->right);
 
-					if(balance2 == -1)
+					if(pivot2 == -1)
 					{
-						node = Rotate_Left(node);
+						node = RotateLeft(node);
 					}
 					else
 					{
-						node->right = Rotate_Right(node->right);
-						node = Rotate_Left(node);
+						node->right = RotateRight(node->right);
+						node = RotateLeft(node);
 					}
 				}
 
@@ -298,62 +285,29 @@ namespace Data_Structures
 
 		T Min(Node* node)
 		{
-			if(node == nullptr)
-			{
-				return {};
-			}
-			else if(node->left == nullptr)
-			{
-				return node->data;
-			}
-			else
-			{
-				return Min(node->left);
-			}
-
+			if(node == nullptr) return {};
+			else if(node->left == nullptr) return node->data;
+			else return Min(node->left);
+			
 			return {};
 		}
 
 		T Max(Node* node)
 		{
-			if(node == nullptr)
-			{
-				return {};
-			}
-			else if(node->right == nullptr)
-			{
-				return node->data;
-			}
-			else
-			{
-				return Max(node->right);
-			}
-
+			if(node == nullptr) return {};
+			else if(node->right == nullptr) return node->data;
+			else return Max(node->right);
+			
 			return {};
 		}
 
 		Node* Search(Node* node, const T& data)
 		{
-			if(node == nullptr)
-			{
-				return nullptr;
-			}
-			else if(node->data == data)
-			{
-				return node;
-			}
-			else if(node->data < data)
-			{
-				return Search(node->right, data);
-			}
-			else if(node->data > data)
-			{
-				return Search(node->left, data);
-			}
-			else
-			{
-				return nullptr;
-			}
+			if(node == nullptr) return nullptr;
+			else if(node->data == data) return node;
+			else if(node->data < data) return Search(node->right, data);
+			else if(node->data > data) return Search(node->left, data);
+			else return nullptr;
 		}
 
 		T Successor(Node* node)
@@ -364,16 +318,16 @@ namespace Data_Structures
 			}
 			else
 			{
-				Node* parent_node = node->parent;
-				Node* current_node = node;
+				Node* parent = node->parent;
+				Node* current = node;
 
-				while((parent_node != nullptr) && (current_node == parent_node->right))
+				while((parent != nullptr) && (current == parent->right))
 				{
-					current_node = parent_node;
-					parent_node = current_node->parent;
+					current = parent;
+					parent = current->parent;
 				}
 
-				return parent_node == nullptr ? 0 : parent_node->data;
+				return (parent == nullptr) ? 0 : parent->data;
 			}
 		}
 
@@ -385,61 +339,41 @@ namespace Data_Structures
 			}
 			else
 			{
-				Node* parent_node = node->parent;
-				Node* current_node = node;
+				Node* parent = node->parent;
+				Node* current = node;
 
-				while((parent_node != nullptr) && (current_node == parent_node->left))
+				while((parent != nullptr) && (current == parent->left))
 				{
-					current_node = parent_node;
-					parent_node = current_node->parent;
+					current = parent;
+					parent = current->parent;
 				}
 
-				return parent_node == nullptr ? 0 : parent_node->data;
+				return (parent == nullptr) ? 0 : parent->data;
 			}
 		}
 
-		void Traverse_Pre_Order(Node* node, std::vector<T>& vector)
+		void TraversePreOrder(Node* node, std::vector<T>& vector)
 		{
 			vector.push_back(node->data);
-
-			if(node->left != nullptr)
-			{
-				Traverse_Pre_Order(node->left, vector);
-			}
-
-			if(node->right != nullptr)
-			{
-				Traverse_Pre_Order(node->right, vector);
-			}
+			
+			if(node->left != nullptr) TraversePreOrder(node->left, vector);
+			if(node->right != nullptr) TraversePreOrder(node->right, vector);
 		}
 
-		void Traverse_In_Order(Node* node, std::vector<T>& vector)
+		void TraverseInOrder(Node* node, std::vector<T>& vector)
 		{
-			if(node->left != nullptr)
-			{
-				Traverse_In_Order(node->left, vector);
-			}
-
+			if(node->left != nullptr) TraverseInOrder(node->left, vector);
+			
 			vector.push_back(node->data);
-
-			if(node->right != nullptr)
-			{
-				Traverse_In_Order(node->right, vector);
-			}
+			
+			if(node->right != nullptr) TraverseInOrder(node->right, vector);
 		}
 
-		void Traverse_Post_Order(Node* node, std::vector<T>& vector)
+		void TraversePostOrder(Node* node, std::vector<T>& vector)
 		{
-			if(node->left != nullptr)
-			{
-				Traverse_Post_Order(node->left, vector);
-			}
-
-			if(node->right != nullptr)
-			{
-				Traverse_Post_Order(node->right, vector);
-			}
-
+			if(node->left != nullptr) TraversePostOrder(node->left, vector);
+			if(node->right != nullptr) TraversePostOrder(node->right, vector);
+			
 			vector.push_back(node->data);
 		}
 	};

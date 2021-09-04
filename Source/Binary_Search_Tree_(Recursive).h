@@ -1,12 +1,11 @@
 #pragma once
-
 #include <queue>
 #include <vector>
 
-namespace Data_Structures
+namespace DataStructures
 {
     template<typename T>
-    class Binary_Search_Tree
+    class BinarySearchTree
     {
     private:
         struct Node
@@ -23,13 +22,13 @@ namespace Data_Structures
         Node* root = nullptr;
 
     public:
-    	Binary_Search_Tree()
+    	BinarySearchTree()
 		{}
 
-        Binary_Search_Tree(const T& data) : root{new Node(data)}
+        BinarySearchTree(const T& data) : root{new Node(data)}
         {}
 
-        ~Binary_Search_Tree()
+        ~BinarySearchTree()
         {}
 
         T Min()
@@ -42,33 +41,35 @@ namespace Data_Structures
             return Max(root);
         }
 
-        std::vector<T> Depth_First_Search_In_Order()
+        std::vector<T> DepthFirstSearchInOrder()
 		{
 			std::vector<T> vector;
-			Traverse_In_Order(root, vector);
+			TraverseInOrder(root, vector);
+			
 			return vector;
 		}
 
-		std::vector<T> Depth_First_Search_Pre_Order()
+		std::vector<T> DepthFirstSearchPreOrder()
 		{
 			std::vector<T> vector;
-			Traverse_Pre_Order(root, vector);
+			TraversePreOrder(root, vector);
+			
 			return vector;
 		}
 
-		std::vector<T> Depth_First_Search_Post_Order()
+		std::vector<T> DepthFirstSearchPostOrder()
 		{
 			std::vector<T> vector;
-			Traverse_Post_Order(root, vector);
+			TraversePostOrder(root, vector);
+			
 			return vector;
 		}
 
-		std::vector<T> Breadth_First_Search()
+		std::vector<T> BreadthFirstSearch()
 		{
 			Node* node = root;
 			std::vector<T> vector;
 			std::queue<Node*> queue;
-
 			queue.push(node);
 
 			while(queue.size() > 0)
@@ -77,23 +78,16 @@ namespace Data_Structures
 				queue.pop();
 				vector.push_back(node->data);
 
-				if(node->left != nullptr)
-				{
-					queue.push(node->left);
-				}
-
-				if(node->right != nullptr)
-				{
-					queue.push(node->right);
-				}
+				if(node->left != nullptr) queue.push(node->left);
+				if(node->right != nullptr) queue.push(node->right);
 			}
 
 			return vector;
 		}
 
-        bool Search(const T& data)
+        bool Contains(const T& data)
         {
-            Node* node = Search(root, data);
+            Node* node = Pointer(root, data);
 
             return (node == nullptr) ? false : true;
         }
@@ -115,49 +109,33 @@ namespace Data_Structures
 
         T Successor(const T& data)
         {
-            Node* node = Search(root, data);
-            return node == nullptr ? 0 : Successor(node);
+            Node* node = Pointer(root, data);
+			
+            return (node == nullptr) ? 0 : Successor(node);
         }
 
         T Predecessor(const T& data)
         {
-            Node* node = Search(root, data);
-            return node == nullptr ? 0 : Predecessor(node);
+            Node* node = Pointer(root, data);
+			
+            return (node == nullptr) ? 0 : Predecessor(node);
         }
 
     private:
         T Min(Node* node)
         {
-            if(node == nullptr)
-            {
-                return {};
-            }
-            else if(node->left == nullptr)
-            {
-                return node->data;
-            }
-            else
-            {
-                return Min(node->left);
-            }
+            if(node == nullptr) return {};
+            else if(node->left == nullptr) return node->data;
+            else return Min(node->left);
 
             return {};
         }
 
         T Max(Node* node)
         {
-            if(node == nullptr)
-            {
-                return {};
-            }
-            else if(node->right == nullptr)
-            {
-                return node->data;
-            }
-            else
-            {
-                return Max(node->right);
-            }
+            if(node == nullptr) return {};
+            else if(node->right == nullptr) return node->data;
+            else return Max(node->right);
 
             return {};
         }
@@ -165,78 +143,44 @@ namespace Data_Structures
         void Invert(Node* node)
 		{
 			if(node == nullptr) return;
+			
 			std::swap(node->left, node->right);
 			Invert(node->left);
 			Invert(node->right);
 		}
 
-        void Traverse_Pre_Order(Node* node, std::vector<T>& vector)
+        void TraversePreOrder(Node* node, std::vector<T>& vector)
 		{
 			vector.push_back(node->data);
 
-			if(node->left != nullptr)
-			{
-				Traverse_Pre_Order(node->left, vector);
-			}
-
-			if(node->right != nullptr)
-			{
-				Traverse_Pre_Order(node->right, vector);
-			}
+			if(node->left != nullptr) TraversePreOrder(node->left, vector);
+			if(node->right != nullptr) TraversePreOrder(node->right, vector);
 		}
 
-		void Traverse_In_Order(Node* node, std::vector<T>& vector)
+		void TraverseInOrder(Node* node, std::vector<T>& vector)
 		{
-			if(node->left != nullptr)
-			{
-				Traverse_In_Order(node->left, vector);
-			}
+			if(node->left != nullptr) TraverseInOrder(node->left, vector);
 
 			vector.push_back(node->data);
 
-			if(node->right != nullptr)
-			{
-				Traverse_In_Order(node->right, vector);
-			}
+			if(node->right != nullptr) TraverseInOrder(node->right, vector);
 		}
 
-		void Traverse_Post_Order(Node* node, std::vector<T>& vector)
+		void TraversePostOrder(Node* node, std::vector<T>& vector)
 		{
-			if(node->left != nullptr)
-			{
-				Traverse_Post_Order(node->left, vector);
-			}
-
-			if(node->right != nullptr)
-			{
-				Traverse_Post_Order(node->right, vector);
-			}
+			if(node->left != nullptr) TraversePostOrder(node->left, vector);
+			if(node->right != nullptr) TraversePostOrder(node->right, vector);
 
 			vector.push_back(node->data);
 		}
 
-        Node* Search(Node* node, const T& data)
+        Node* Pointer(Node* node, const T& data)
         {
-            if(node == nullptr)
-            {
-                return nullptr;
-            }
-            else if(node->data == data)
-            {
-                return node;
-            }
-            else if(node->data < data)
-            {
-                return Search(node->right, data);
-            }
-            else if(node->data > data)
-            {
-                return Search(node->left, data);
-            }
-            else
-            {
-                return nullptr;
-            }
+            if(node == nullptr) return nullptr;
+            else if(node->data == data) return node;
+            else if(node->data < data) return Pointer(node->right, data);
+            else if(node->data > data) return Pointer(node->left, data);
+            else return nullptr;
         }
 
         Node* Insert(Node* node, const T& data)
@@ -261,10 +205,7 @@ namespace Data_Structures
 
         Node* Remove(Node* node, const T& data)
         {
-            if(node == nullptr)
-            {
-                return nullptr;
-            }
+            if(node == nullptr) return nullptr;
 
             if(node->data == data)
             {
@@ -318,7 +259,7 @@ namespace Data_Structures
                     parent_node = current_node->parent;
                 }
 
-                return parent_node == nullptr ? 0 : parent_node->data;
+                return (parent_node == nullptr) ? 0 : parent_node->data;
             }
         }
 
@@ -339,7 +280,7 @@ namespace Data_Structures
                     parent_node = current_node->parent;
                 }
 
-                return parent_node == nullptr ? 0 : parent_node->data;
+                return (parent_node == nullptr) ? 0 : parent_node->data;
             }
         }
     };

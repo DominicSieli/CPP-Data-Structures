@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Data_Structures
+namespace DataStructures
 {
 	template<typename T>
 	class Deque
@@ -29,7 +29,7 @@ namespace Data_Structures
 			Delete();
 		}
 
-		void Enqueue_Back(const T& data)
+		void EnqueueBack(const T& data)
 		{
 			count++;
 			Node* node = new Node(data, nullptr, back);
@@ -46,7 +46,7 @@ namespace Data_Structures
 			}
 		}
 
-		void Enqueue_Front(const T& data)
+		void EnqueueFront(const T& data)
 		{
 			count++;
 			Node* node = new Node(data, front, nullptr);
@@ -63,7 +63,7 @@ namespace Data_Structures
 			}
 		}
 
-		constexpr T Dequeue_Back()
+		constexpr T DequeueBack()
 		{
 			T data {};
 
@@ -73,18 +73,16 @@ namespace Data_Structures
 				Node* node = back;
 				data = back->data;
 				back = back->previous;
+				
 				delete node;
 			}
 
-			if(back == nullptr)
-			{
-				front = nullptr;
-			}
+			if(back == nullptr) front = nullptr;
 
 			return data;
 		}
 
-	    constexpr T Dequeue_Front()
+	    constexpr T DequeueFront()
 		{
 			T data {};
 
@@ -94,33 +92,25 @@ namespace Data_Structures
 				Node* node = front;
 				data = front->data;
 				front = front->next;
+				
 				delete node;
 			}
 
-			if(front == nullptr)
-			{
-				back = nullptr;
-			}
+			if(front == nullptr) back = nullptr;
 
 			return data;
 		}
 
 		constexpr T Front() const
 		{
-			if(front != nullptr)
-			{
-				return front->data;
-			}
+			if(front != nullptr) return front->data;
 
 			return {};
 		}
 
 		constexpr T Back() const
 		{
-			if(back != nullptr)
-			{
-				return back->data;
-			}
+			if(back != nullptr) return back->data;
 
 			return {};
 		}
@@ -142,6 +132,7 @@ namespace Data_Structures
 				count--;
 				Node* node = front;
 				front = front->next;
+				
 				delete node;
 			}
 

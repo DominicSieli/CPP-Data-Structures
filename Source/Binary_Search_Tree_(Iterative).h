@@ -1,12 +1,11 @@
 #pragma once
-
 #include <queue>
 #include <vector>
 
-namespace Data_Structures
+namespace DataStructures
 {
 	template<typename T>
-	class Binary_Search_Tree
+	class BinarySearchTree
 	{
 	private:
 		struct Node
@@ -23,47 +22,49 @@ namespace Data_Structures
 		Node* root = nullptr;
 
 	public:
-		Binary_Search_Tree()
+		BinarySearchTree()
 		{}
 
-		Binary_Search_Tree(const T& data) : root{new Node(data)}
+		BinarySearchTree(const T& data) : root{new Node(data)}
         {}
 
-		~Binary_Search_Tree()
+		~BinarySearchTree()
 		{}
 
 		bool Contains(const T& data)
 		{
-			return Node_Pointer(data);
+			return Pointer(data);
 		}
 
-		std::vector<T> Depth_First_Search_In_Order()
+		std::vector<T> DepthFirstSearchInOrder()
 		{
 			std::vector<T> vector;
-			Traverse_In_Order(root, vector);
+			TraverseInOrder(root, vector);
+			
 			return vector;
 		}
 
-		std::vector<T> Depth_First_Search_Pre_Order()
+		std::vector<T> DepthFirstSearchPreOrder()
 		{
 			std::vector<T> vector;
-			Traverse_Pre_Order(root, vector);
+			TraversePreOrder(root, vector);
+			
 			return vector;
 		}
 
-		std::vector<T> Depth_First_Search_Post_Order()
+		std::vector<T> DepthFirstSearchPostOrder()
 		{
 			std::vector<T> vector;
-			Traverse_Post_Order(root, vector);
+			TraversePostOrder(root, vector);
+			
 			return vector;
 		}
 
-		std::vector<T> Breadth_First_Search()
+		std::vector<T> BreadthFirstSearch()
 		{
 			Node* node = root;
 			std::vector<T> vector;
 			std::queue<Node*> queue;
-
 			queue.push(node);
 
 			while(queue.size() > 0)
@@ -72,15 +73,8 @@ namespace Data_Structures
 				queue.pop();
 				vector.push_back(node->data);
 
-				if(node->left != nullptr)
-				{
-					queue.push(node->left);
-				}
-
-				if(node->right != nullptr)
-				{
-					queue.push(node->right);
-				}
+				if(node->left != nullptr) queue.push(node->left);
+				if(node->right != nullptr) queue.push(node->right);
 			}
 
 			return vector;
@@ -88,21 +82,14 @@ namespace Data_Structures
 
 		void Insert(const T& data)
 		{
-			if(Contains(data) == true)
-			{
-				return;
-			}
+			if(Contains(data) == true) return;
 
 			Node* pointer = root;
 			Node* node = new Node(data);
 
 			while(true)
 			{
-				if(root == nullptr)
-				{
-					root = node;
-					return;
-				}
+				if(root == nullptr) {root = node; return;}
 
 				if(data < pointer->data)
 				{
@@ -114,6 +101,7 @@ namespace Data_Structures
 					{
 						pointer->left = node;
 						node->parent = pointer;
+						
 						return;
 					}
 				}
@@ -127,6 +115,7 @@ namespace Data_Structures
 					{
 						pointer->right = node;
 						node->parent = pointer;
+						
 						return;
 					}
 				}
@@ -135,14 +124,11 @@ namespace Data_Structures
 
 		void Remove(const T& data)
 		{
-			Node* node = Node_Pointer(data);
+			Node* node = Pointer(data);
 
-			if(node == nullptr)
-			{
-				return;
-			}
+			if(node == nullptr) return;
 
-			Node* successor = Node_Successor(node);
+			Node* successor = Successor(node);
 
 			if(node == root)
 			{
@@ -203,100 +189,80 @@ namespace Data_Structures
 			std::queue<Node*> que;
 			que.push(root);
 
-			while(!que.empty())
+			while(que.empty() == false)
 			{
 				Node* node = que.front();
 				que.pop();
 				std::swap(node->left, node->right);
+				
 				if(node->left) que.push(node->left);
 				if(node->right) que.push(node->right);
 			}
 		}
 
 	private:
-		void Traverse_Pre_Order(Node* node, std::vector<T>& vector)
+		void TraversePreOrder(Node* node, std::vector<T>& vector)
 		{
 			vector.push_back(node->data);
 
-			if(node->left != nullptr)
-			{
-				Traverse_Pre_Order(node->left, vector);
-			}
-
-			if(node->right != nullptr)
-			{
-				Traverse_Pre_Order(node->right, vector);
-			}
+			if(node->left != nullptr) TraversePreOrder(node->left, vector);
+			if(node->right != nullptr) TraversePreOrder(node->right, vector);
 		}
 
-		void Traverse_In_Order(Node* node, std::vector<T>& vector)
+		void TraverseInOrder(Node* node, std::vector<T>& vector)
 		{
-			if(node->left != nullptr)
-			{
-				Traverse_In_Order(node->left, vector);
-			}
+			if(node->left != nullptr) TraverseInOrder(node->left, vector);
 
 			vector.push_back(node->data);
 
-			if(node->right != nullptr)
-			{
-				Traverse_In_Order(node->right, vector);
-			}
+			if(node->right != nullptr) TraverseInOrder(node->right, vector);
 		}
 
-		void Traverse_Post_Order(Node* node, std::vector<T>& vector)
+		void TraversePostOrder(Node* node, std::vector<T>& vector)
 		{
-			if(node->left != nullptr)
-			{
-				Traverse_Post_Order(node->left, vector);
-			}
-
-			if(node->right != nullptr)
-			{
-				Traverse_Post_Order(node->right, vector);
-			}
+			if(node->left != nullptr) TraversePostOrder(node->left, vector);
+			if(node->right != nullptr) TraversePostOrder(node->right, vector);
 
 			vector.push_back(node->data);
 		}
 
-		Node* Node_Pointer(const T& data)
+		Node* Pointer(const T& data)
 		{
-			if(root == nullptr)
-			{
-				return nullptr;
-			}
+			if(root == nullptr) return nullptr;
 
-			Node* pointer = root;
+			Node* node = root;
 
 			while(true)
 			{
-				if(pointer->data == data)
+				if(node->data == data)
 				{
-					return pointer;
+					return node;
 				}
 				else
 				{
-					if(data < pointer->data)
+					if(data < node->data)
 					{
-						if(pointer->left == nullptr)
+						if(node->left == nullptr)
 						{
 							return nullptr;
 						}
 						else
 						{
-							pointer = pointer->left;
+							node = node->left;
+							
 							continue;
 						}
 					}
-					else if(data > pointer->data)
+					else if(data > node->data)
 					{
-						if(pointer->right == nullptr)
+						if(node->right == nullptr)
 						{
 							return nullptr;
 						}
 						else
 						{
-							pointer = pointer->right;
+							node = node->right;
+							
 							continue;
 						}
 					}
@@ -304,7 +270,7 @@ namespace Data_Structures
 			}
 		}
 
-		Node* Node_Successor(const Node* node)
+		Node* Successor(const Node* node)
 		{
 			if(node->left == nullptr && node->right == nullptr)
 			{
@@ -325,6 +291,7 @@ namespace Data_Structures
 				while(successor->left != nullptr)
 				{
 					successor = successor->left;
+					
 					return successor;
 				}
 			}

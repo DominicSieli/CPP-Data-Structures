@@ -1,6 +1,7 @@
 #pragma once
+#include <initializer_list>
 
-namespace Data_Structures
+namespace DataStructures
 {
 	template<typename T>
 	class Queue
@@ -22,6 +23,14 @@ namespace Data_Structures
 	public:
 		Queue()
 		{}
+		
+		Queue(const std::initializer_list<T>& list)
+		{
+			for(const T& data : list)
+			{
+				Enqueue(data);
+			}
+		}
 
 		~Queue()
 		{
@@ -33,16 +42,8 @@ namespace Data_Structures
 			count++;
 			Node* node = new Node(data);
 
-			if(back == nullptr || front == nullptr)
-			{
-				back = node;
-				front = node;
-			}
-			else
-			{
-				back->next = node;
-				back = node;
-			}
+			if(back == nullptr || front == nullptr) {back = node; front = node;}
+			else {back->next = node; back = node;}
 		}
 
 	    constexpr T Dequeue()
@@ -58,30 +59,21 @@ namespace Data_Structures
 				delete node;
 			}
 
-			if(front == nullptr)
-			{
-				back = nullptr;
-			}
+			if(front == nullptr) back = nullptr;
 
 			return data;
 		}
 
 		constexpr T Front() const
 		{
-			if(front != nullptr)
-			{
-				return front->data;
-			}
+			if(front != nullptr) return front->data;
 
 			return {};
 		}
 
 		constexpr T Back() const
 		{
-			if(back != nullptr)
-			{
-				return back->data;
-			}
+			if(back != nullptr) return back->data;
 
 			return {};
 		}

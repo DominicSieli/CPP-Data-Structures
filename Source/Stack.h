@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Data_Structures
+namespace DataStructures
 {
 	template<typename T>
 	class Stack
@@ -36,27 +36,22 @@ namespace Data_Structures
 
 		constexpr T Pop()
 		{
-			if(top != nullptr)
-			{
-				count--;
-				T data = top->data;
-				Node* node = top;
-				top = top->next;
-				delete node;
-				return data;
-			}
+			if(top == nullptr) return {};
 
-			return {};
+			count--;
+			T data = top->data;
+			Node* node = top;
+			top = top->next;
+			delete node;
+			
+			return data;
 		}
 
 		constexpr T Top() const
 		{
-			if(top != nullptr)
-			{
-				return top->data;
-			}
-
-			return {};
+			if(top == nullptr) return {};
+			
+			return top->data;
 		}
 
 		constexpr bool Empty() const

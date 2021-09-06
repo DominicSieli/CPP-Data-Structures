@@ -1,6 +1,7 @@
 #pragma once
-#include <stdio.h>
-#include <string.h>
+#include <vector>
+#include <string>
+#include <initializer_list>
 
 #define SIZE 256
 
@@ -12,7 +13,7 @@ namespace DataStructures
 		struct Node
 		{
 			bool terminal = false;
-			struct Node* chidren[SIZE];
+			Node* children[SIZE] = {nullptr};
 		};
 
 		Node* root = nullptr;
@@ -21,139 +22,53 @@ namespace DataStructures
 		Trie()
 		{}
 		
+		Trie(const std::initializer_list<std::string>& list)
+		{
+			for(const std::string& text : list)
+			{
+				Insert(text);
+			}
+		}
+		
 		~Trie()
 		{}
 		
-		bool Search(char* signedText)
+		void Insert(const std::string& text)
+		{
+			if(root == nullptr) root = new Node();
+
+			Node* node = root;
+
+			for(unsigned int i = 0; i < text.length(); i++)
+			{
+				unsigned char index = (unsigned char)text[i];
+				
+				if(node->children[index] == nullptr)
+				{
+					node->children[index] = new Node();
+				}
+
+				node = node->children[index];
+				node->terminal = true;
+			}
+		}
+		
+		bool Contains(const std::string& text)
 		{
 			if(root == nullptr) return false;
 
-			Node* rootPointer = root;
-			int length = strlen(signedText);
-			unsigned char* text = (unsigned char*)signedText;
-
-			for(int i = 0; i < length; i++)
-			{
-				if(rootPointer->chidren[text[i]] == nullptr) return false;
-
-				rootPointer = rootPointer->chidren[text[i]];
-			}
-
-			return rootPointer->terminal;
-		}
-
-		bool Insert(char* signedText)
-		{
-			if(root == nullptr) root = CreateNode();
-
-			Node* rootPointer = root;
-			int length = strlen(signedText);
-			unsigned char* text = (unsigned char*)signedText;
-
-			for(int i = 0; i < length; i++)
-			{
-				if(rootPointer->chidren[text[i]] == nullptr)
-				{
-					rootPointer->chidren[text[i]] = CreateNode();
-				}
-
-				rootPointer = rootPointer->chidren[text[i]];
-			}
-
-			if(rootPointer->terminal == true) return false;
-			else {rootPointer->terminal = true; return true;}
-		}
-		
-		bool Delete(char* signedText)
-		{
-			if(root == nullptr) return false;
-
-			bool result = false;
-			Node** nodePointer = &root;
-			unsigned char* text = (unsigned char*)signedText;
-			*nodePointer = Delete(*nodePointer, text, &result);
+			Node* node = root;
 			
-			return result;
-		}
-		
-		void Print()
-		{
-			if(root == nullptr) {printf("Empty\n"); return;}
-
-			Print(root, nullptr, 0);
-		}
-		
-	private:
-		Node* CreateNode()
-		{
-			Node* node = new Node();
-
-			for(int i = 0; i < SIZE; i++)
+			for(unsigned int i = 0; i < text.length(); i++)
 			{
-				node->chidren[i] = nullptr;
+				unsigned char index = (unsigned char)text[i];
+				
+				if(node->children[index] == nullptr) return false;
+
+				node = node->children[index];
 			}
 
-			node->terminal = false;
-			
-			return node;
-		}
-
-		bool NodeTerminal(Node* node)
-		{
-			if(node == nullptr) return false;
-
-			for(int i = 0; i < SIZE; i++)
-			{
-				if(node->chidren[i] != nullptr) return true;
-			}
-
-			return false;
-		}
-
-		Node* Delete(Node* node, unsigned char* text, bool deleted)
-		{
-			if(node == nullptr) return node;
-
-			if(*text == '\0')
-			{
-				if(node->terminal == true)
-				{
-					deleted = true;
-					node->terminal = false;
-
-					if(NodeTerminal(node) == false) {delete node; node = nullptr;}
-				}
-
-				return node;
-			}
-
-			node->chidren[text[0]] = Delete(node->chidren[text[0]], text + 1, deleted);
-
-			if(deleted == true && NodeTerminal(node) == false && node->terminal == false)
-			{
-				delete node;
-				node = nullptr;
-			}
-
-			return node;
-		}
-
-		void Print(Node* node, unsigned char* prefix, int length)
-		{
-			unsigned char newPrefix[length + 2];
-			memcpy(newPrefix, prefix, length);
-			newPrefix[length + 1] = 0;
-
-			if(node->terminal == true) printf("%s\n", prefix);
-
-			for(int i = 0; i < SIZE; i++)
-			{
-				if(node->chidren[i] != nullptr)
-				{
-					newPrefix[length] = i;
-					Print(node->chidren[i], newPrefix, length + 1);
-				}
-			}
+			return (node->terminal);
 		}
 	};
 }
